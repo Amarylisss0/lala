@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Мой профиль{% endblock %}
+
+{% block header_title %}Мой профиль{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('library') }}" class="btn btn-outline-primary btn-sm btn-back">
+        <i class="fas fa-arrow-left me-1"></i> Назад
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if user.photo_url %}
+                <img src="{{ user.photo_url }}" alt="{{ user.first_name }}" class="img-thumbnail rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                {% else %}
+                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px;">
+                    <i class="fas fa-user fa-4x text-white"></i>
+                </div>
+                {% endif %}
+                <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+                {% if user.username %}
+                <p class="card-text text-muted">@{{ user.username }}</p>
+                {% endif %}
+                <p class="card-text">
+                    <small class="text-muted">С нами с {{ user.auth_date.strftime('%d.%m.%Y') }}</small>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Настройки профиля</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('profile') }}">
+                    <h6 class="mb-3">Предпочтения для рекомендаций</h6>
+                    
+                    {% set preferences = user.get_preferences() %}
+                    
+                    <div class="mb-3">
+                        <label for="favorite_genres" class="form-label">Любимые жанры</label>
+                        <select class="form-select" id="favorite_genres" name="favorite_genres" multiple>
+                            {% set selected_genres = preferences.get('favorite_genres', []) %}
+                            <option value="fiction" {% if 'fiction' in selected_genres %}selected{% endif %}>Художественная литература</option>
+                            <option value="fantasy" {% if 'fantasy' in selected_genres %}selected{% endif %}>Фэнтези</option>
+                            <option value="sci-fi" {% if 'sci-fi' in selected_genres %}selected{% endif %}>Научная фантастика</option>
+                            <option value="mystery" {% if 'mystery' in selected_genres %}selected{% endif %}>Детектив</option>
+                            <option value="thriller" {% if 'thriller' in selected_genres %}selected{% endif %}>Триллер</option>
+                            <option value="horror" {% if 'horror' in selected_genres %}selected{% endif %}>Ужасы</option>
+                            <option value="romance" {% if 'romance' in selected_genres %}selected{% endif %}>Романтика</option>
+                            <option value="historical" {% if 'historical' in selected_genres %}selected{% endif %}>Историческая</option>
+                            <option value="biography" {% if 'biography' in selected_genres %}selected{% endif %}>Биография</option>
+                            <option value="psychology" {% if 'psychology' in selected_genres %}selected{% endif %}>Психология</option>
+                            <option value="philosophy" {% if 'philosophy' in selected_genres %}selected{% endif %}>Философия</option>
+                            <option value="business" {% if 'business' in selected_genres %}selected{% endif %}>Бизнес</option>
+                            <option value="science" {% if 'science' in selected_genres %}selected{% endif %}>Наука</option>
+                            <option value="self-help" {% if 'self-help' in selected_genres %}selected{% endif %}>Саморазвитие</option>
+                            <option value="poetry" {% if 'poetry' in selected_genres %}selected{% endif %}>Поэзия</option>
+                        </select>
+                        <div class="form-text">Удерживайте Ctrl (или Cmd) для выбора нескольких жанров</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="reading_pace" class="form-label">Темп чтения</label>
+                        <select class="form-select" id="reading_pace" name="reading_pace">
+                            <option value="">Выберите темп чтения</option>
+                            <option value="slow" {% if preferences.get('reading_pace') == 'slow' %}selected{% endif %}>Медленный (1-2 книги в месяц)</option>
+                            <option value="medium" {% if preferences.get('reading_pace') == 'medium' %}selected{% endif %}>Средний (3-5 книг в месяц)</option>
+                            <option value="fast" {% if preferences.get('reading_pace') == 'fast' %}selected{% endif %}>Быстрый (более 5 книг в месяц)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="preferred_languages" class="form-label">Предпочитаемые языки книг</label>
+                        <select class="form-select" id="preferred_languages" name="preferred_languages" multiple>
+                            {% set selected_languages = preferences.get('preferred_languages', []) %}
+                            <option value="ru" {% if 'ru' in selected_languages %}selected{% endif %}>Русский</option>
+                            <option value="en" {% if 'en' in selected_languages %}selected{% endif %}>Английский</option>
+                            <option value="fr" {% if 'fr' in selected_languages %}selected{% endif %}>Французский</option>
+                            <option value="de" {% if 'de' in selected_languages %}selected{% endif %}>Немецкий</option>
+                            <option value="es" {% if 'es' in selected_languages %}selected{% endif %}>Испанский</option>
+                            <option value="it" {% if 'it' in selected_languages %}selected{% endif %}>Итальянский</option>
+                        </select>
+                        <div class="form-text">Удерживайте Ctrl (или Cmd) для выбора нескольких языков</div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Сохранить настройки</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Статистика чтения</h5>
+            </div>
+            <div class="card-body">
+                {% set to_read_count = user.books|selectattr('status', 'equalto', 'to_read')|list|length %}
+                {% set reading_count = user.books|selectattr('status', 'equalto', 'reading')|list|length %}
+                {% set completed_count = user.books|selectattr('status', 'equalto', 'completed')|list|length %}
+                {% set abandoned_count = user.books|selectattr('status', 'equalto', 'abandoned')|list|length %}
+                {% set total_count = user.books|length %}
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="text-center">
+                        <h5 class="mb-0">{{ total_count }}</h5>
+                        <small class="text-muted">Всего книг</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="mb-0">{{ completed_count }}</h5>
+                        <small class="text-muted">Прочитано</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="mb-0">{{ reading_count }}</h5>
+                        <small class="text-muted">Читаю</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="mb-0">{{ to_read_count }}</h5>
+                        <small class="text-muted">Хочу прочитать</small>
+                    </div>
+                </div>
+                
+                <div class="progress">
+                    {% if total_count > 0 %}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ (completed_count / total_count * 100)|round }}%" 
+                        title="Прочитано: {{ completed_count }}"></div>
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (reading_count / total_count * 100)|round }}%" 
+                        title="Читаю: {{ reading_count }}"></div>
+                    <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ (to_read_count / total_count * 100)|round }}%" 
+                        title="Хочу прочитать: {{ to_read_count }}"></div>
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (abandoned_count / total_count * 100)|round }}%" 
+                        title="Заброшено: {{ abandoned_count }}"></div>
+                    {% else %}
+                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 100%" 
+                        title="Нет книг">Нет книг</div>
+                    {% endif %}
+                </div>
+                
+                {% if total_count > 0 %}
+                <small class="text-muted d-block text-center mt-2">
+                    {{ (completed_count / total_count * 100)|round }}% книг прочитано
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 text-center">
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+        <i class="fas fa-sign-out-alt me-1"></i> Выйти
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user_book.book.title }}{% endblock %}
+
+{% block header_title %}Информация о книге{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('library') }}" class="btn btn-outline-primary btn-sm btn-back">
+        <i class="fas fa-arrow-left me-1"></i> Назад в библиотеку
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-4 text-center">
+        {% if user_book.book.cover_url %}
+        <img src="{{ user_book.book.cover_url }}" alt="{{ user_book.book.title }}" class="book-detail-cover img-fluid">
+        {% else %}
+        <div class="book-cover-placeholder my-4" style="height: 250px;">
+            <i class="fas fa-book fa-5x"></i>
+        </div>
+        {% endif %}
+        
+        <div class="d-flex justify-content-center gap-2 mb-4">
+            <a href="{{ url_for('edit_book', user_book_id=user_book.id) }}" class="btn btn-primary">
+                <i class="fas fa-edit me-1"></i> Редактировать
+            </a>
+            <form method="post" action="{{ url_for('delete_book', user_book_id=user_book.id) }}">
+                <button type="submit" class="btn btn-outline-danger delete-book-btn">
+                    <i class="fas fa-trash me-1"></i> Удалить
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="book-detail-info">
+            <span class="badge status-{{ user_book.status }} float-end">{{ user_book.reading_status_display }}</span>
+            <h2 class="book-detail-title">{{ user_book.book.title }}</h2>
+            <p class="book-detail-author">{{ user_book.book.author }}</p>
+            
+            <div class="book-detail-meta">
+                {% if user_book.book.published_date %}
+                <div class="book-detail-meta-item">
+                    <i class="fas fa-calendar me-1"></i> {{ user_book.book.published_date }}
+                </div>
+                {% endif %}
+                
+                {% if user_book.book.publisher %}
+                <div class="book-detail-meta-item">
+                    <i class="fas fa-building me-1"></i> {{ user_book.book.publisher }}
+                </div>
+                {% endif %}
+                
+                {% if user_book.book.page_count %}
+                <div class="book-detail-meta-item">
+                    <i class="fas fa-file-alt me-1"></i> {{ user_book.book.page_count }} стр.
+                </div>
+                {% endif %}
+                
+                {% if user_book.book.language %}
+                <div class="book-detail-meta-item">
+                    <i class="fas fa-language me-1"></i> {{ user_book.book.language }}
+                </div>
+                {% endif %}
+                
+                {% if user_book.book.isbn %}
+                <div class="book-detail-meta-item">
+                    <i class="fas fa-barcode me-1"></i> ISBN: {{ user_book.book.isbn }}
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if user_book.book.get_categories_list() %}
+            <div class="book-categories mb-3">
+                {% for category in user_book.book.get_categories_list() %}
+                <span class="badge bg-secondary me-1">{{ category }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if user_book.book.description %}
+            <div class="book-detail-description">
+                <h5>Описание</h5>
+                <p>{{ user_book.book.description }}</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="book-user-data">
+            <h5>Мои заметки</h5>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Статус чтения</label>
+                        <div>
+                            <span class="badge status-{{ user_book.status }} fs-6">{{ user_book.reading_status_display }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Моя оценка</label>
+                        <div class="rating-display">
+                            {% if user_book.rating %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= user_book.rating %}
+                                    <i class="fas fa-star"></i>
+                                    {% elif i <= user_book.rating + 0.5 %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                    <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                ({{ user_book.rating }})
+                            {% else %}
+                                <span class="text-muted">Нет оценки</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Дата начала чтения</label>
+                        <div>
+                            {% if user_book.start_date %}
+                                {{ user_book.start_date.strftime('%d.%m.%Y') }}
+                            {% else %}
+                                <span class="text-muted">Не указана</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Дата завершения</label>
+                        <div>
+                            {% if user_book.end_date %}
+                                {{ user_book.end_date.strftime('%d.%m.%Y') }}
+                            {% else %}
+                                <span class="text-muted">Не указана</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if user_book.review %}
+            <div class="mb-3">
+                <label class="form-label">Моя рецензия</label>
+                <div class="p-3 bg-light rounded">
+                    {{ user_book.review }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if user_book.notes %}
+            <div class="mb-3">
+                <label class="form-label">Мои заметки</label>
+                <div class="p-3 bg-light rounded">
+                    {{ user_book.notes }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if user_book.book.google_books_id %}
+        <div class="mt-3">
+            <a href="https://books.google.com/books?id={{ user_book.book.google_books_id }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-external-link-alt me-1"></i> Открыть в Google Books
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

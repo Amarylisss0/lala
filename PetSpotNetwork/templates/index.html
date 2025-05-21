@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Книжный журнал - Добро пожаловать{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <div class="py-4">
+        <h1 class="display-5 fw-bold">Ваш книжный журнал</h1>
+        <p class="lead">Отслеживайте прочитанные книги и получайте рекомендации</p>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Что вы можете делать с помощью этого приложения:</h5>
+                    <div class="text-start">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Добавлять книги через Google Books API</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Вести учет прочитанных книг</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Отслеживать статус чтения</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Оценивать книги и писать рецензии</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Получать персональные рекомендации</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            {% if not g.user %}
+            <div class="mt-4">
+                <button id="telegram-auth" class="btn telegram-auth-btn btn-lg">
+                    <i class="fab fa-telegram"></i>
+                    Войти через Telegram
+                </button>
+                <p class="small text-muted mt-2">Для использования приложения необходима авторизация через Telegram</p>
+            </div>
+            {% else %}
+            <div class="mt-4">
+                <a href="{{ url_for('library') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-book me-2"></i>
+                    Перейти в мою библиотеку
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-book-open fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Удобный учет книг</h5>
+                            <p class="card-text">Отслеживайте свои книги, их статус чтения и прогресс в одном месте.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-search fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Поиск книг</h5>
+                            <p class="card-text">Быстрый поиск по названию, автору или жанру. Интеграция с Google Books.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-lightbulb fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Умные рекомендации</h5>
+                            <p class="card-text">Получайте персональные рекомендации на основе ваших предпочтений.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

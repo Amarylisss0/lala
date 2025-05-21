@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Моя библиотека{% endblock %}
+
+{% block header_title %}Моя библиотека{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="d-flex align-items-center mb-3">
+            <select id="status-filter" class="form-select me-2">
+                <option value="all" {% if status == 'all' %}selected{% endif %}>Все книги</option>
+                <option value="to_read" {% if status == 'to_read' %}selected{% endif %}>Хочу прочитать</option>
+                <option value="reading" {% if status == 'reading' %}selected{% endif %}>Читаю</option>
+                <option value="completed" {% if status == 'completed' %}selected{% endif %}>Прочитано</option>
+                <option value="abandoned" {% if status == 'abandoned' %}selected{% endif %}>Заброшено</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex align-items-center justify-content-md-end mb-3">
+            <select id="sort-by" class="form-select me-2" style="max-width: 150px;">
+                <option value="updated_at" {% if sort_by == 'updated_at' %}selected{% endif %}>Дата обновления</option>
+                <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Название</option>
+                <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Автор</option>
+                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Рейтинг</option>
+            </select>
+            <select id="sort-order" class="form-select" style="max-width: 100px;">
+                <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>По убыванию</option>
+                <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>По возрастанию</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div id="library-container">
+    {% if user_books %}
+        <div class="row g-3">
+            {% for user_book in user_books %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card book-card h-100" data-book-id="{{ user_book.id }}">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <div class="book-cover-container">
+                                {% if user_book.book.cover_url %}
+                                <img src="{{ user_book.book.cover_url }}" alt="{{ user_book.book.title }}" class="book-cover">
+                                {% else %}
+                                <div class="book-cover-placeholder">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="card-body">
+                                <span class="badge status-{{ user_book.status }} float-end">{{ user_book.reading_status_display }}</span>
+                                <h5 class="card-title text-truncate">{{ user_book.book.title }}</h5>
+                                <p class="card-text author text-truncate">{{ user_book.book.author }}</p>
+                                
+                                {% if user_book.rating %}
+                                <div class="rating-display mb-2">
+                                    {% for i in range(1, 6) %}
+                                        {% if i <= user_book.rating %}
+                                        <i class="fas fa-star"></i>
+                                        {% elif i <= user_book.rating + 0.5 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                        {% else %}
+                                        <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                
+                                <div class="book-actions mt-2">
+                                    <a href="{{ url_for('book_detail', user_book_id=user_book.id) }}" class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a href="{{ url_for('edit_book', user_book_id=user_book.id) }}" class="btn btn-sm btn-outline-secondary me-1">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="post" action="{{ url_for('delete_book', user_book_id=user_book.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger delete-book-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-book fa-4x mb-3 text-muted"></i>
+            <h3>Ваша библиотека пуста</h3>
+            <p class="text-muted">Начните добавлять книги, чтобы вести учет вашего чтения</p>
+            <a href="{{ url_for('add_book') }}" class="btn btn-primary mt-3">
+                <i class="fas fa-plus-circle me-2"></i>
+                Добавить первую книгу
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

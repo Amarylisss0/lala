@@ -1,0 +1,357 @@
+/* Custom styles for Telegram Book Journal app */
+
+/* Telegram theme variables (will be set by JS) */
+:root {
+    --tg-theme-bg-color: #ffffff;
+    --tg-theme-text-color: #000000;
+    --tg-theme-hint-color: #999999;
+    --tg-theme-link-color: #2678b6;
+    --tg-theme-button-color: #2678b6;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #f0f0f0;
+    
+    /* App-specific colors */
+    --rating-color: #ffc107;
+    --to-read-color: #6c757d;
+    --reading-color: #0d6efd;
+    --completed-color: #198754;
+    --abandoned-color: #dc3545;
+}
+
+/* Body and general styles */
+body {
+    background-color: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 70px; /* Space for footer */
+}
+
+/* Header styles */
+.app-header {
+    background-color: var(--tg-theme-bg-color);
+    border-bottom: 1px solid var(--tg-theme-hint-color);
+    padding: 12px 0;
+}
+
+.app-logo {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: var(--tg-theme-text-color);
+}
+
+/* Footer navigation */
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--tg-theme-bg-color);
+    border-top: 1px solid var(--tg-theme-hint-color);
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.footer-nav {
+    display: flex;
+    justify-content: space-around;
+}
+
+.nav-link {
+    color: var(--tg-theme-hint-color);
+    text-align: center;
+    font-size: 0.75rem;
+    transition: color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-link i {
+    font-size: 1.25rem;
+    margin-bottom: 5px;
+}
+
+.nav-link.active {
+    color: var(--tg-theme-link-color);
+}
+
+/* Book cards */
+.book-card {
+    background-color: var(--tg-theme-secondary-bg-color);
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.book-cover-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.book-cover {
+    max-height: 150px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.book-cover-placeholder {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tg-theme-hint-color);
+    font-size: 2rem;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.author {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    color: var(--tg-theme-hint-color);
+}
+
+.categories {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Book status indicators */
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+}
+
+.status-to-read {
+    background-color: var(--to-read-color);
+    color: #fff;
+}
+
+.status-reading {
+    background-color: var(--reading-color);
+    color: #fff;
+}
+
+.status-completed {
+    background-color: var(--completed-color);
+    color: #fff;
+}
+
+.status-abandoned {
+    background-color: var(--abandoned-color);
+    color: #fff;
+}
+
+/* Rating stars */
+.rating-display {
+    color: var(--rating-color);
+    font-size: 1rem;
+}
+
+.rating-input {
+    display: inline-flex;
+    font-size: 1.5rem;
+}
+
+.rating-star {
+    cursor: pointer;
+    color: var(--tg-theme-hint-color);
+    transition: color 0.2s;
+    margin-right: 5px;
+}
+
+.rating-star.active {
+    color: var(--rating-color);
+}
+
+/* Forms */
+.form-control, .form-select {
+    background-color: var(--tg-theme-secondary-bg-color);
+    border: 1px solid var(--tg-theme-hint-color);
+    color: var(--tg-theme-text-color);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    border-color: var(--tg-theme-link-color);
+    box-shadow: 0 0 0 0.25rem rgba(38, 120, 182, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--tg-theme-text-color);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--tg-theme-button-color);
+    border-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+}
+
+.btn-outline-primary {
+    border-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+}
+
+/* Loading overlay */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.spinner-wrapper {
+    background-color: var(--tg-theme-bg-color);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Error container */
+#error-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+}
+
+/* Telegram auth button */
+.telegram-auth-btn {
+    background-color: #0088cc;
+    border-color: #0088cc;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+.telegram-auth-btn i {
+    margin-right: 10px;
+    font-size: 1.5rem;
+}
+
+/* Book detail page */
+.book-detail-cover {
+    max-height: 300px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.book-detail-info {
+    margin-bottom: 30px;
+}
+
+.book-detail-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.book-detail-author {
+    font-size: 1.1rem;
+    color: var(--tg-theme-hint-color);
+    margin-bottom: 15px;
+}
+
+.book-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.book-detail-meta-item {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    background-color: var(--tg-theme-secondary-bg-color);
+    border-radius: 5px;
+}
+
+.book-detail-description {
+    margin-bottom: 20px;
+}
+
+.book-user-data {
+    background-color: var(--tg-theme-secondary-bg-color);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* Search filters */
+.search-filters {
+    background-color: var(--tg-theme-secondary-bg-color);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .book-detail-cover {
+        max-height: 200px;
+    }
+    
+    .book-detail-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Dark mode adjustments */
+body[data-theme="dark"] .form-control,
+body[data-theme="dark"] .form-select {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+body[data-theme="dark"] .card {
+    background-color: rgba(255, 255, 255, 0.05);
+}

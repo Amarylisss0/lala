@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'edit' %}Редактировать книгу{% else %}Добавить книгу{% endif %}{% endblock %}
+
+{% block header_title %}{% if mode == 'edit' %}Редактировать книгу{% else %}Добавить книгу{% endif %}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="javascript:history.back()" class="btn btn-outline-primary btn-sm btn-back">
+        <i class="fas fa-arrow-left me-1"></i> Назад
+    </a>
+</div>
+
+{% if not mode == 'edit' %}
+<div id="search-section">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Поиск в Google Books</h5>
+        </div>
+        <div class="card-body">
+            <form id="google-search-form" class="mb-3">
+                <div class="input-group">
+                    <input type="text" id="google-search-input" class="form-control" placeholder="Введите название книги или автора...">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Искать
+                    </button>
+                </div>
+            </form>
+            
+            <div id="search-results">
+                <!-- Search results will appear here -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center my-4">
+        <p>или</p>
+        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('search-section').classList.add('d-none'); document.getElementById('form-section').classList.remove('d-none');">
+            <i class="fas fa-plus-circle me-1"></i> Добавить книгу вручную
+        </button>
+    </div>
+</div>
+{% endif %}
+
+<div id="form-section" class="{% if not mode == 'edit' %}d-none{% endif %}">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">{% if mode == 'edit' %}Информация о книге{% else %}Добавить книгу вручную{% endif %}</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" class="book-form" {% if mode == 'edit' %}action="{{ url_for('edit_book', user_book_id=user_book.id) }}"{% else %}action="{{ url_for('add_book') }}"{% endif %}>
+                {% if mode == 'edit' and user_book.book.google_books_id %}
+                <input type="hidden" id="google_books_id" name="google_books_id" value="{{ user_book.book.google_books_id }}">
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Название книги*</label>
+                            <input type="text" class="form-control" id="title" name="title" required 
+                                   value="{% if mode == 'edit' %}{{ user_book.book.title }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="author" class="form-label">Автор</label>
+                            <input type="text" class="form-control" id="author" name="author"
+                                   value="{% if mode == 'edit' %}{{ user_book.book.author }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="isbn" class="form-label">ISBN</label>
+                            <input type="text" class="form-control" id="isbn" name="isbn"
+                                   value="{% if mode == 'edit' %}{{ user_book.book.isbn }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="categories" class="form-label">Категории/Жанры</label>
+                            <input type="text" class="form-control" id="categories" name="categories" placeholder="Фэнтези, Приключения, Роман"
+                                   value="{% if mode == 'edit' %}{{ user_book.book.categories }}{% endif %}">
+                            <div class="form-text">Разделяйте категории запятыми</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Описание</label>
+                    <textarea class="form-control" id="description" name="description" rows="3">{% if mode == 'edit' %}{{ user_book.book.description }}{% endif %}</textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="cover_url" class="form-label">URL обложки</label>
+                            <input type="url" class="form-control" id="cover_url" name="cover_url"
+                                   value="{% if mode == 'edit' %}{{ user_book.book.cover_url }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="page_count" class="form-label">Количество страниц</label>
+                            <input type="number" class="form-control" id="page_count" name="page_count" min="1"
+                                   value="{% if mode == 'edit' and user_book.book.page_count %}{{ user_book.book.page_count }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="published_date" class="form-label">Дата публикации</label>
+                            <input type="text" class="form-control" id="published_date" name="published_date" placeholder="2023 или 2023-08-15"
+                                   value="{% if mode == 'edit' %}{{ user_book.book.published_date }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="publisher" class="form-label">Издательство</label>
+                            <input type="text" class="form-control" id="publisher" name="publisher"
+                                   value="{% if mode == 'edit' %}{{ user_book.book.publisher }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="language" class="form-label">Язык</label>
+                            <input type="text" class="form-control" id="language" name="language" placeholder="ru, en, fr, etc."
+                                   value="{% if mode == 'edit' %}{{ user_book.book.language }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <h5 class="mb-3">Информация о чтении</h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Статус чтения</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="to_read" {% if mode == 'edit' and user_book.status == 'to_read' %}selected{% endif %}>Хочу прочитать</option>
+                                <option value="reading" {% if mode == 'edit' and user_book.status == 'reading' %}selected{% endif %}>Читаю</option>
+                                <option value="completed" {% if mode == 'edit' and user_book.status == 'completed' %}selected{% endif %}>Прочитано</option>
+                                <option value="abandoned" {% if mode == 'edit' and user_book.status == 'abandoned' %}selected{% endif %}>Заброшено</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Моя оценка</label>
+                            <div class="rating-input">
+                                <input type="hidden" name="rating" value="{% if mode == 'edit' and user_book.rating %}{{ user_book.rating }}{% endif %}">
+                                <span class="rating-star" data-value="1"><i class="fas fa-star"></i></span>
+                                <span class="rating-star" data-value="2"><i class="fas fa-star"></i></span>
+                                <span class="rating-star" data-value="3"><i class="fas fa-star"></i></span>
+                                <span class="rating-star" data-value="4"><i class="fas fa-star"></i></span>
+                                <span class="rating-star" data-value="5"><i class="fas fa-star"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Дата начала чтения</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date"
+                                   value="{% if mode == 'edit' and user_book.start_date %}{{ user_book.start_date.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">Дата завершения чтения</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date"
+                                   value="{% if mode == 'edit' and user_book.end_date %}{{ user_book.end_date.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="review" class="form-label">Моя рецензия</label>
+                    <textarea class="form-control" id="review" name="review" rows="3">{% if mode == 'edit' %}{{ user_book.review }}{% endif %}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Заметки</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="2">{% if mode == 'edit' %}{{ user_book.notes }}{% endif %}</textarea>
+                </div>
+                
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> {% if mode == 'edit' %}Сохранить изменения{% else %}Добавить книгу{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

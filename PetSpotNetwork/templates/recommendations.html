@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Рекомендации книг{% endblock %}
+
+{% block header_title %}Рекомендации{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('library') }}" class="btn btn-outline-primary btn-sm btn-back">
+        <i class="fas fa-arrow-left me-1"></i> Назад в библиотеку
+    </a>
+</div>
+
+<div class="mb-4">
+    <div class="alert alert-info">
+        <i class="fas fa-lightbulb me-2"></i>
+        Рекомендации основаны на книгах в вашей библиотеке и ваших предпочтениях. Чем больше книг вы добавите и оцените, тем точнее будут рекомендации.
+    </div>
+</div>
+
+{% if recommendations %}
+    <div class="row g-3" id="recommendations-container">
+        {% for book in recommendations %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card book-card h-100">
+                <div class="row g-0">
+                    <div class="col-4">
+                        <div class="book-cover-container">
+                            {% if book.cover_url %}
+                            <img src="{{ book.cover_url }}" alt="{{ book.title }}" class="book-cover">
+                            {% else %}
+                            <div class="book-cover-placeholder">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">{{ book.title }}</h5>
+                            <p class="card-text author text-truncate">{{ book.author }}</p>
+                            
+                            {% if book.get_categories_list() %}
+                            <p class="card-text categories small">
+                                {{ book.get_categories_list()|join(', ', 2) }}
+                            </p>
+                            {% endif %}
+                            
+                            <div class="book-actions mt-2">
+                                <a href="{{ url_for('add_book') }}?book_id={{ book.id }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-plus me-1"></i> Добавить в библиотеку
+                                </a>
+                                
+                                {% if book.google_books_id %}
+                                <a href="https://books.google.com/books?id={{ book.google_books_id }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-1">
+                                    <i class="fas fa-external-link-alt me-1"></i> Google Books
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-star fa-4x mb-3 text-muted"></i>
+        <h3>Нет рекомендаций</h3>
+        <p class="text-muted">Добавьте больше книг в вашу библиотеку и укажите свои предпочтения в профиле, чтобы получить персональные рекомендации</p>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('add_book') }}" class="btn btn-primary me-2">
+                <i class="fas fa-plus-circle me-1"></i> Добавить книгу
+            </a>
+            <a href="{{ url_for('profile') }}" class="btn btn-outline-primary">
+                <i class="fas fa-user-cog me-1"></i> Обновить предпочтения
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+<div class="mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Как улучшить рекомендации</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="text-center">
+                        <i class="fas fa-book fa-2x mb-2 text-primary"></i>
+                        <h6>1. Добавьте больше книг</h6>
+                        <p class="small text-muted">Чем больше книг в вашей библиотеке, тем точнее будут рекомендации</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="text-center">
+                        <i class="fas fa-star fa-2x mb-2 text-primary"></i>
+                        <h6>2. Оценивайте книги</h6>
+                        <p class="small text-muted">Ваши оценки помогают системе понять ваши предпочтения</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="fas fa-user-cog fa-2x mb-2 text-primary"></i>
+                        <h6>3. Обновите профиль</h6>
+                        <p class="small text-muted">Укажите любимые жанры и другие предпочтения в своем профиле</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
